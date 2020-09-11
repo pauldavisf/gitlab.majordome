@@ -5,7 +5,7 @@ namespace GitLab.Majordome.Abstractions
 {
     public interface IMergeRequestsProvider
     {
-        Task<IList<MergeRequestInfo>> GetOpenedMergeRequestAsync(int projectGroupId,
+        Task<IReadOnlyList<MergeRequestInfo>> GetOpenedMergeRequestAsync(int projectGroupId,
             GetMergeRequestsOptions? options = null);
     }
 }

@@ -17,7 +17,6 @@ namespace GitLab.Majordome.Logic
         private readonly IMergeRequestsProvider mergeRequestsProvider;
         private readonly IUsersRepository usersRepository;
         private readonly IBotService botService;
-        private Timer? timer;
 
         public MergeRequestNotifier(
             IMergeRequestsProvider mergeRequestsProvider,
@@ -33,9 +32,7 @@ namespace GitLab.Majordome.Logic
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            timer = new Timer(NotifyAllUsersAsync!, cancellationToken, TimeSpan.Zero, TimeSpan.FromSeconds(3));
-
-            return Task.CompletedTask;
+            return Task.Factory.StartNew(NotifyAllUsersAsync, cancellationToken);
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
@@ -43,24 +40,29 @@ namespace GitLab.Majordome.Logic
             return Task.CompletedTask;
         }
 
-        public async void NotifyAllUsersAsync(object state)
+        private async Task NotifyAllUsersAsync()
         {
-            var getMergeRequestsOptions = new GetMergeRequestsOptionsBuilder()
-                .ExcludingProjects(gitLabOptions.ExcludingProjects)
-                .OnlyOpened()
-                .OnlyNotWorkInProgress()
-                .Build();
+            while (true)
+            {
+                var getMergeRequestsOptions = new GetMergeRequestsOptionsBuilder()
+                    .ExcludingProjects(gitLabOptions.ExcludingProjects)
+                    .OnlyOpened()
+                    .OnlyNotWorkInProgress()
+                    .Build();
 
-            var mergeRequests = await mergeRequestsProvider.GetOpenedMergeRequestAsync(
-                gitLabOptions.ProjectGroupId,
-                getMergeRequestsOptions);
+                var mergeRequests = await mergeRequestsProvider.GetOpenedMergeRequestAsync(
+                    gitLabOptions.ProjectGroupId,
+                    getMergeRequestsOptions);
 
-            var users = usersRepository.GetAllUsers();
-            var notifyTasks = users.Select(async user => await NotifyUserAsync(user, mergeRequests));
-            await Task.WhenAll(notifyTasks);
+                var users = usersRepository.GetAllUsers();
+                var notifyTasks = users.Select(async user => await NotifyUserAsync(user, mergeRequests));
+                await Task.WhenAll(notifyTasks);
+
+                await Task.Delay(TimeSpan.FromMinutes(2)); // TODO: вынести в настройки
+            }
         }
 
-        private async Task NotifyUserAsync(User user, IList<MergeRequestInfo> mergeRequests)
+        private async Task NotifyUserAsync(User user, IReadOnlyList<MergeRequestInfo> mergeRequests)
         {
             if (DateTime.UtcNow - user.LastNotifyDate < TimeSpan.FromHours(24)
                 || DateTime.UtcNow.TimeOfDay > new TimeSpan(22, 0, 0)
@@ -85,7 +87,7 @@ namespace GitLab.Majordome.Logic
             await Task.WhenAll(notifyTasks);
         }
 
-        public static IList<MergeRequestInfo> GetNotUpvotedByUser(IList<MergeRequestInfo> mergeRequests, string username)
+        private static IReadOnlyList<MergeRequestInfo> GetNotUpvotedByUser(IReadOnlyList<MergeRequestInfo> mergeRequests, string username)
         {
             return mergeRequests.Where(x =>
                     x.AuthorUsername != username

@@ -19,8 +19,7 @@ namespace GitLab.Majordome.Logic
             this.gitLabClient = gitLabClient;
         }
 
-        public async Task<IList<MergeRequestInfo>> GetOpenedMergeRequestAsync(
-            int projectGroupId,
+        public async Task<IReadOnlyList<MergeRequestInfo>> GetOpenedMergeRequestAsync(int projectGroupId,
             GetMergeRequestsOptions? options = null)
         {
             options ??= new GetMergeRequestsOptions();

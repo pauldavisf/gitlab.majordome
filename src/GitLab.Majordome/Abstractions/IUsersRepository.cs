@@ -6,7 +6,7 @@ namespace GitLab.Majordome.Abstractions
 {
     public interface IUsersRepository
     {
-        IList<User> GetAllUsers();
+        IReadOnlyList<User> GetAllUsers();
         string? GetUserEmail(long chatId);
         Task<OperationResult> SaveUserAsync(User user);
         Task SetUserNotifiedDate(string username, DateTime date);

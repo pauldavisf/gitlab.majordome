@@ -20,9 +20,9 @@ namespace GitLab.Majordome.Logic
             this.chatOptions = chatOptions.Value;
         }
 
-        public IList<User> GetAllUsers()
+        public IReadOnlyList<User> GetAllUsers()
         {
-            return chatOptions.Users;
+            return chatOptions.Users.ToList();
         }
 
         public string? GetUserEmail(long chatId)

@@ -59,7 +59,7 @@ namespace GitLab.Majordome.BotCommands
             }
         }
 
-        private Task<IList<MergeRequestInfo>> GetMergeRequests(string username)
+        private Task<IReadOnlyList<MergeRequestInfo>> GetMergeRequests(string username)
         {
             var getMergeRequestsOptions = new GetMergeRequestsOptionsBuilder()
                 .ExcludingProjects(gitLabOptions.ExcludingProjects)
@@ -72,7 +72,7 @@ namespace GitLab.Majordome.BotCommands
             return mergeRequestsProvider.GetOpenedMergeRequestAsync(gitLabOptions.ProjectGroupId, getMergeRequestsOptions);
         }
 
-        private static string BuildMergeRequestsString(IList<MergeRequestInfo> mergeRequestInfos)
+        private static string BuildMergeRequestsString(IReadOnlyList<MergeRequestInfo> mergeRequestInfos)
         {
             var reviewsListStringBuilder = new StringBuilder();
             foreach (var mergeRequest in mergeRequestInfos)
