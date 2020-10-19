@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GitLab.Majordome.Abstractions;
 
 namespace GitLab.Majordome.Configuration
 {
     public class ChatOptions
     {
-        public IList<User> Users { get; set; } = new List<User>();
+        public IReadOnlyList<User> Users { get; set; } = ArraySegment<User>.Empty;
     }
 }

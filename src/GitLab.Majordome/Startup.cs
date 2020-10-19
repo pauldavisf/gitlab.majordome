@@ -28,6 +28,10 @@ namespace GitLab.Majordome
             services.Configure<ChatOptions>(Configuration.GetSection("Users"));
             services.Configure<GitLabOptions>(Configuration.GetSection("GitLab"));
 
+            services.AddMvc();
+
+            services.AddOptions();
+
             services.AddHttpContextAccessor();
 
             services.AddSingleton<IBotCommand, StartCommand>();

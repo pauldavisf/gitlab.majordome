@@ -50,7 +50,9 @@ namespace GitLab.Majordome.Logic
             }
             else
             {
-                chatOptions.Users.Add(user);
+                var newUsers = chatOptions.Users.ToList();
+                newUsers.Add(user);
+                chatOptions.Users = newUsers;
             }
 
             await SaveOptionsToFile();
