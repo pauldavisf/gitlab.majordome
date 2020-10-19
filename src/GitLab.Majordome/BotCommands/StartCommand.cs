@@ -24,8 +24,8 @@ namespace GitLab.Majordome.BotCommands
             await message.ReplyAsync(
                 botService,
                 "Приветствую, сэр! Я ваш новый дворецкий, буду напоминать о ревью\n" +
-                "Чтобы получать сообщения, укажите свой e-mail, привязанный к GitLab вот так:\n" +
-                "/email ваша@почта.com");
+                "Чтобы получать сообщения, укажите свой userName, привязанный к GitLab вот так:\n" +
+                "/login вашUserName (без @)");
         }
     }
 }

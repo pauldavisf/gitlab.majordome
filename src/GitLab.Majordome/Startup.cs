@@ -34,7 +34,7 @@ namespace GitLab.Majordome
             services.AddHttpContextAccessor();
 
             services.AddSingleton<IBotCommand, StartCommand>();
-            services.AddSingleton<IBotCommand, EmailCommand>();
+            services.AddSingleton<IBotCommand, LoginCommand>();
             services.AddSingleton<IBotCommand, ListReviewsCommand>();
 
             services.AddSingleton<IUsersRepository, UsersRepository>();

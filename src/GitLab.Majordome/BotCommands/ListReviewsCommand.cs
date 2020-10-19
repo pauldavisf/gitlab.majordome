@@ -39,7 +39,7 @@ namespace GitLab.Majordome.BotCommands
             var username = usersRepository.GetUserEmail(message.Chat.Id);
             if (username == null)
             {
-                await message.ReplyAsync(botService, @"Извините, я не нашел ваш e-mail, попробуйте выполнить /email ваша@почта.com");
+                await message.ReplyAsync(botService, @"Извините, я не нашел ваш логин, попробуйте выполнить /login");
                 return;
             }
 
