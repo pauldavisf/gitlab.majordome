@@ -1,4 +1,5 @@
-﻿using GitLab.Majordome.Abstractions;
+﻿using System.Linq;
+using GitLab.Majordome.Abstractions;
 
 namespace GitLab.Majordome.Logic
 {
@@ -6,6 +7,14 @@ namespace GitLab.Majordome.Logic
     {
         public static bool MatchesOptions(this MergeRequestInfo mergeRequest, GetMergeRequestsOptions mergeRequestsOptions)
         {
+            if (mergeRequestsOptions.ExcludingProjectIds != null)
+            {
+                if (mergeRequestsOptions.ExcludingProjectIds.Contains(mergeRequest.ProjectId))
+                {
+                    return false;
+                }
+            }
+
             if (mergeRequestsOptions.AuthorUsername != null)
             {
                 if (mergeRequest.AuthorUsername != mergeRequestsOptions.AuthorUsername)

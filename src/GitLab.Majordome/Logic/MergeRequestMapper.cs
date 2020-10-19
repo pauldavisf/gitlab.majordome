@@ -13,6 +13,7 @@ namespace GitLab.Majordome.Logic
             return new MergeRequestInfo
             {
                 Id = mergeRequest.Id,
+                ProjectId = mergeRequest.ProjectId,
                 Title = mergeRequest.Title,
                 AuthorUsername = mergeRequest.Author.Username,
                 UpvotedBy = awardEmojis.Where(x => x.Name == "thumbsup").Select(x => x.User.Username).ToList(),
