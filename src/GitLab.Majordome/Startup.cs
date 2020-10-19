@@ -24,7 +24,6 @@ namespace GitLab.Majordome
         {
             var credentials = Configuration.GetSection("Credentials");
             services.Configure<Credentials>(credentials);
-            services.Configure<BotOptions>(Configuration.GetSection("Bot"));
             services.Configure<ChatOptions>(Configuration.GetSection("Users"));
             services.Configure<GitLabOptions>(Configuration.GetSection("GitLab"));
 
@@ -45,8 +44,8 @@ namespace GitLab.Majordome
                 "https://git.skbkontur.ru/",
                 credentials["GitLabToken"]));
 
-            services.AddHostedService<BotSetupTask>();
             services.AddHostedService<MergeRequestNotifier>();
+            services.AddHostedService<PollingService>();
 
             services.AddScoped<IBotUpdateHandler, BotUpdateHandler>();
             services.AddSingleton<IBotService, BotService>();

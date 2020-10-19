@@ -66,7 +66,7 @@ namespace GitLab.Majordome.Logic
         {
             if (DateTime.UtcNow - user.LastNotifyDate < TimeSpan.FromHours(24)
                 || DateTime.UtcNow.TimeOfDay > new TimeSpan(22, 0, 0)
-                && DateTime.UtcNow.TimeOfDay < new TimeSpan(6, 0, 0))
+                && DateTime.UtcNow.TimeOfDay < new TimeSpan(9, 0, 0))
             {
                 return;
             }

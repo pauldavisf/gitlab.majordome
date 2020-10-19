@@ -18,7 +18,7 @@ namespace GitLab.Majordome.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]Update update)
         {
-            await botUpdateHandler.EchoAsync(update);
+            await botUpdateHandler.HandleAsync(update);
             return Ok();
         }
     }

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using GitLab.Majordome.Abstractions;
@@ -13,23 +12,21 @@ namespace GitLab.Majordome.Logic
 {
     public class BotUpdateHandler : IBotUpdateHandler
     {
-        private readonly IBotService _botService;
         private readonly IEnumerable<IBotCommand> botCommands;
-        private readonly ILogger<BotUpdateHandler> _logger;
+        private readonly ILogger<BotUpdateHandler> logger;
 
-        public BotUpdateHandler(IBotService botService, IEnumerable<IBotCommand> botCommands, ILogger<BotUpdateHandler> logger)
+        public BotUpdateHandler(IEnumerable<IBotCommand> botCommands, ILogger<BotUpdateHandler> logger)
         {
             if (botCommands == null || !botCommands.Any())
             {
                 throw new ArgumentException("No bot commands registered");
             }
 
-            _botService = botService;
             this.botCommands = botCommands;
-            _logger = logger;
+            this.logger = logger;
         }
 
-        public async Task EchoAsync(Update update)
+        public async Task HandleAsync(Update update)
         {
             if (update.Type != UpdateType.Message)
             {
@@ -38,39 +35,17 @@ namespace GitLab.Majordome.Logic
 
             var message = update.Message;
 
-            _logger.LogInformation("Received Message from {0}", message.Chat.Id);
+            logger.LogInformation("Received Message from {0}", message.Chat.Id);
 
             foreach (var botCommand in botCommands)
             {
-                if (botCommand.CanExecute(message))
+                if (!botCommand.CanExecute(message))
                 {
-                    await botCommand.ExecuteAsync(message);
-                    return;
+                    continue;
                 }
-            }
 
-            return;
-
-            switch (message.Type)
-            {
-                case MessageType.Text:
-                    // Echo each Message
-                    await _botService.Client.SendTextMessageAsync(message.Chat.Id, message.Text);
-                    break;
-
-                case MessageType.Photo:
-                    // Download Photo
-                    var fileId = message.Photo.LastOrDefault()?.FileId;
-                    var file = await _botService.Client.GetFileAsync(fileId);
-
-                    var filename = file.FileId + "." + file.FilePath.Split('.').Last();
-                    using (var saveImageStream = System.IO.File.Open(filename, FileMode.Create))
-                    {
-                        await _botService.Client.DownloadFileAsync(file.FilePath, saveImageStream);
-                    }
-
-                    await _botService.Client.SendTextMessageAsync(message.Chat.Id, "Thx for the Pics");
-                    break;
+                await botCommand.ExecuteAsync(message);
+                return;
             }
         }
     }
