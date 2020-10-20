@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using GitLab.Majordome.Abstractions;
@@ -73,18 +74,42 @@ namespace GitLab.Majordome.Logic
 
             var mergeRequestsToNotify = GetNotUpvotedByUser(mergeRequests, user.Email);
 
-            var notifyTasks = mergeRequestsToNotify.Select(async mergeRequest =>
+            await SendMessageAsync(user, mergeRequestsToNotify);
+        }
+
+        private async Task SendMessageAsync(User user, IReadOnlyList<MergeRequestInfo> mergeRequests)
+        {
+            if (mergeRequests.Count == 1)
             {
                 await botService.Client.SendTextMessageAsync(
                     user.ChatId,
-                    $"Сэр, напоминаю вам о [ревью \"{mergeRequest.Title}\"]({mergeRequest.WebUrl}), ".EscapeMarkdown() +
-                    "так как все еще не вижу вашего лайка",
+                    $"Сэр, напоминаю вам о [ревью \"{mergeRequests[0].Title}\"]({mergeRequests[0].WebUrl}), ".EscapeMarkdown() +
+                    "не вижу вашего лайка",
                     ParseMode.MarkdownV2);
+            }
+            else if (mergeRequests.Count > 1)
+            {
+                var requestsString = BuildMergeRequestsString(mergeRequests).EscapeMarkdown();
 
-                await usersRepository.SetUserNotifiedDate(user.Email, DateTime.UtcNow);
-            });
+                await botService.Client.SendTextMessageAsync(
+                    user.ChatId,
+                    $"Я нашел ревью без вашего лайка:\n{requestsString}",
+                    ParseMode.MarkdownV2);
+            }
 
-            await Task.WhenAll(notifyTasks);
+            await usersRepository.SetUserNotifiedDate(user.Email, DateTime.UtcNow);
+        }
+
+        private static string BuildMergeRequestsString(IReadOnlyList<MergeRequestInfo> mergeRequests)
+        {
+            var reviewsListStringBuilder = new StringBuilder();
+            foreach (var mergeRequest in mergeRequests)
+            {
+                reviewsListStringBuilder.AppendLine();
+                reviewsListStringBuilder.AppendLine($"[{mergeRequest.Title}]({mergeRequest.WebUrl})");
+            }
+
+            return reviewsListStringBuilder.ToString();
         }
 
         private static IReadOnlyList<MergeRequestInfo> GetNotUpvotedByUser(IReadOnlyList<MergeRequestInfo> mergeRequests, string username)
