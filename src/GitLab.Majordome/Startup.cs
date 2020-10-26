@@ -37,6 +37,7 @@ namespace GitLab.Majordome
             services.AddSingleton<IBotCommand, LoginCommand>();
             services.AddSingleton<IBotCommand, ListReviewsCommand>();
 
+            services.AddSingleton<IAdminService, AdminService>();
             services.AddSingleton<IUsersRepository, UsersRepository>();
             services.AddSingleton<IMergeRequestsProvider, MergeRequestsProvider>();
 
