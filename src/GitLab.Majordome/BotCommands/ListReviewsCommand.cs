@@ -50,7 +50,7 @@ namespace GitLab.Majordome.BotCommands
             {
                 await message.ReplyAsync(
                     botService,
-                    $"Я нашел следующие ревью без вашего лайка:\n{reviewsListString.EscapeMarkdown()}",
+                    $"Я нашел ревью без вашего лайка:\n{reviewsListString.EscapeMarkdown()}",
                     ParseMode.MarkdownV2);
             }
             else
@@ -77,8 +77,7 @@ namespace GitLab.Majordome.BotCommands
             var reviewsListStringBuilder = new StringBuilder();
             foreach (var mergeRequest in mergeRequestInfos)
             {
-                reviewsListStringBuilder.AppendLine();
-                reviewsListStringBuilder.AppendLine($"[{mergeRequest.Title}]({mergeRequest.WebUrl})");
+                reviewsListStringBuilder.AppendLine($"• [{mergeRequest.Title}]({mergeRequest.WebUrl})");
             }
 
             return reviewsListStringBuilder.ToString();

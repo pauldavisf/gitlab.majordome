@@ -105,8 +105,7 @@ namespace GitLab.Majordome.Logic
             var reviewsListStringBuilder = new StringBuilder();
             foreach (var mergeRequest in mergeRequests)
             {
-                reviewsListStringBuilder.AppendLine();
-                reviewsListStringBuilder.AppendLine($"[{mergeRequest.Title}]({mergeRequest.WebUrl})");
+                reviewsListStringBuilder.AppendLine($"• [{mergeRequest.Title}]({mergeRequest.WebUrl})");
             }
 
             return reviewsListStringBuilder.ToString();
