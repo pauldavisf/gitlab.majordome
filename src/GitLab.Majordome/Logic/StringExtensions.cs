@@ -6,7 +6,7 @@ namespace GitLab.Majordome.Logic
     {
         public static string EscapeMarkdown(this string s)
         {
-            return Regex.Replace(s, @"([|\\*-])", @"\$1");
+            return Regex.Replace(s, @"([|\\*-.+!_])", @"\$1");
         }
     }
 }
