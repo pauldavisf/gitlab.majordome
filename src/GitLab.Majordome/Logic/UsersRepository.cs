@@ -13,11 +13,14 @@ namespace GitLab.Majordome.Logic
 {
     public class UsersRepository : IUsersRepository
     {
-        private readonly ChatOptions chatOptions;
+        private ChatOptions chatOptions;
 
-        public UsersRepository(IOptions<ChatOptions> chatOptions)
+        public UsersRepository(IOptionsMonitor<ChatOptions> chatOptions)
         {
-            this.chatOptions = chatOptions.Value;
+            this.chatOptions = chatOptions.CurrentValue;
+            this.chatOptions.Users ??= new List<User>();
+
+            chatOptions.OnChange(OnChatOptionsChange);
         }
 
         public IReadOnlyList<User> GetAllUsers()
@@ -50,9 +53,7 @@ namespace GitLab.Majordome.Logic
             }
             else
             {
-                var newUsers = chatOptions.Users.ToList();
-                newUsers.Add(user);
-                chatOptions.Users = newUsers;
+                chatOptions.Users.Add(user);
             }
 
             await SaveOptionsToFile();
@@ -70,10 +71,23 @@ namespace GitLab.Majordome.Logic
             }
         }
 
+        private void OnChatOptionsChange(ChatOptions options)
+        {
+            this.chatOptions.Users = options.Users ?? new List<User>();
+        }
+
         private async Task SaveOptionsToFile()
         {
+            var root = new
+            {
+                Chats = new
+                {
+                    Users = chatOptions.Users
+                }
+            };
+
             var serializedOptions = JsonSerializer.Serialize(
-                chatOptions,
+                root,
                 new JsonSerializerOptions
                 {
                     WriteIndented = true

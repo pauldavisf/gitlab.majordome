@@ -24,7 +24,7 @@ namespace GitLab.Majordome
         {
             var credentials = Configuration.GetSection("Credentials");
             services.Configure<Credentials>(credentials);
-            services.Configure<ChatOptions>(Configuration.GetSection("Users"));
+            services.Configure<ChatOptions>(Configuration.GetSection("Chats"));
             services.Configure<GitLabOptions>(Configuration.GetSection("GitLab"));
 
             services.AddMvc();

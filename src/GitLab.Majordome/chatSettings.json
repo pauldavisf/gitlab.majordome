@@ -1,10 +1,6 @@
 {
-  "Users": [
-    {
-      "ChatId": 539266753,
-      "Email": "fazluktinov",
-      "TelegramNickname": "oopenminded",
-      "LastNotifyDate": "2020-09-07T12:36:39.6592585Z"
-    }
-  ]
+  "Chats": {
+    "Users": [
+    ]
+  }
 }
